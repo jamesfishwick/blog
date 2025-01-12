@@ -1,6 +1,17 @@
 import os
 import dj_database_url
 import djp
+import environ
+
+# Initialize environment variables
+env = environ.Env()
+environ.Env.read_env()  # Reads .env file
+
+DATABASES = {
+    'default': env.db('DATABASE_URL'),
+}
+
+print(f"DATABASE_URL: {env('DATABASE_URL', default='Not Set')}")
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)

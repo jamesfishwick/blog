@@ -21,7 +21,7 @@ class Base(Feed):
 
     def item_link(self, item):
         return (
-            "https://simonwillison.net"
+            "https://jamesfishwick.com"
             + item.get_absolute_url()
             + "#atom-%s" % self.ga_source
         )
@@ -141,7 +141,7 @@ def sitemap(request):
     for klass in (Entry, Blogmark, Quotation):
         for obj in klass.objects.only("slug", "created"):
             xml.append(
-                "<url><loc>https://simonwillison.net%s</loc></url>"
+                "<url><loc>https://jamesfishwick.com%s</loc></url>"
                 % obj.get_absolute_url()
             )
     xml.append("</urlset>")

@@ -25,7 +25,7 @@ handler404 = "blog.views.custom_404"
 
 def wellknown_webfinger(request):
     remote_url = (
-        "https://fedi.simonwillison.net/.well-known/webfinger?"
+        "https://fedi.jamesfishwick.com/.well-known/webfinger?"
         + request.META["QUERY_STRING"]
     )
     return proxy_view(request, remote_url)
@@ -33,19 +33,19 @@ def wellknown_webfinger(request):
 
 def wellknown_hostmeta(request):
     remote_url = (
-        "https://fedi.simonwillison.net/.well-known/host-meta?"
+        "https://fedi.jamesfishwick.com/.well-known/host-meta?"
         + request.META["QUERY_STRING"]
     )
     return proxy_view(request, remote_url)
 
 
 def wellknown_nodeinfo(request):
-    remote_url = "https://fedi.simonwillison.net/.well-known/nodeinfo"
+    remote_url = "https://fedi.jamesfishwick.com/.well-known/nodeinfo"
     return proxy_view(request, remote_url)
 
 
 def username_redirect(request):
-    return HttpResponseRedirect("https://fedi.simonwillison.net/@simon")
+    return HttpResponseRedirect("https://fedi.jamesfishwick.com/@simon")
 
 
 def newsletter_redirect(request):
@@ -63,7 +63,7 @@ FAVICON = open(os.path.join(settings.BASE_DIR, "static/favicon.ico"), "rb").read
 
 def static_redirect(request):
     return HttpResponsePermanentRedirect(
-        "http://static.simonwillison.net%s" % request.get_full_path()
+        "http://static.jamesfishwick.com%s" % request.get_full_path()
     )
 
 
@@ -87,7 +87,7 @@ User-agent: *
 Disallow: /admin/
 Disallow: /search/
 
-Sitemap: https://simonwillison.net/sitemap.xml
+Sitemap: https://jamesfishwick.com/sitemap.xml
 """
 
 
