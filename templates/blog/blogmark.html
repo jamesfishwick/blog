@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}{{ blogmark.title }} | Minimal Wave Blog{% endblock %}
+{% block meta_description %}{{ blogmark.commentary_rendered|striptags }}{% endblock %}
+
+{% block og_title %}{{ blogmark.title }}{% endblock %}
+{% block og_description %}{{ blogmark.commentary_rendered|striptags }}{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block og_url %}{{ request.build_absolute_uri }}{% endblock %}
+
+{% block content %}
+<article class="post-content">
+    <header>
+        <h1 class="synth-wave-header">{{ blogmark.title }}</h1>
+        <div class="post-meta">{{ blogmark.created|date:"F j, Y" }}</div>
+    </header>
+    
+    <a href="{{ blogmark.url }}" class="blogmark-url neon-text">{{ blogmark.url }}</a>
+    
+    <div class="blogmark-commentary">
+        {{ blogmark.commentary_rendered }}
+    </div>
+    
+    {% if blogmark.via %}
+    <div class="blogmark-via">
+        Via: <a href="{{ blogmark.via }}">{{ blogmark.via_title|default:blogmark.via }}</a>
+    </div>
+    {% endif %}
+    
+    {% if blogmark.tags.exists %}
+    <div class="post-tags">
+        <h3>Tags:</h3>
+        {% for tag in blogmark.tags.all %}
+        <a href="{% url 'blog:tag' tag.slug %}" class="tag">{{ tag.name }}</a>
+        {% endfor %}
+    </div>
+    {% endif %}
+</article>
+{% endblock %}
