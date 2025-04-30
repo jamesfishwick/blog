@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Minimal Wave Blog{% endblock %}
 
@@ -9,14 +10,14 @@
 {% block content %}
 <section class="blog-index">
     <h2 class="synth-wave-header">Latest Posts</h2>
-    
+
     {% for entry in entries %}
     <article class="post-card">
         <h3><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h3>
         <div class="post-meta">
             {{ entry.created|date:"F j, Y" }}
             {% if entry.authors.exists %}
-            by 
+            by
             {% for authorship in entry.authorship_set.all %}
                 {{ authorship.user.get_full_name|default:authorship.user.username }}{% if not forloop.last %}, {% endif %}
             {% endfor %}
@@ -39,7 +40,7 @@
     {% empty %}
     <p>No blog posts yet.</p>
     {% endfor %}
-    
+
     {% if has_more %}
     <p><a href="{% url 'blog:archive' %}">View more posts in the archive &rarr;</a></p>
     {% endif %}
@@ -47,7 +48,7 @@
 
 <section class="blogmarks">
     <h2 class="synth-wave-header">Recent Links</h2>
-    
+
     {% for blogmark in blogmarks %}
     <article class="post-card">
         <h3><a href="{{ blogmark.get_absolute_url }}">{{ blogmark.title }}</a></h3>

@@ -6,13 +6,13 @@
 {% block content %}
 <section class="archive">
     <h1 class="synth-wave-header">Archive</h1>
-    
+
     {% regroup entries by created.year as entries_by_year %}
     {% regroup blogmarks by created.year as blogmarks_by_year %}
-    
+
     {% for year, year_entries in entries_by_year %}
     <h2 class="archive-year">{{ year }}</h2>
-        
+
         {% regroup year_entries by created|date:"F" as entries_by_month %}
         {% for month, month_entries in entries_by_month %}
         <h3 class="archive-month">{{ month }}</h3>
@@ -23,23 +23,22 @@
                 <a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a>
             </li>
             {% endfor %}
-            
-            {% with year_blogmarks=blogmarks_by_year|selectattr:"grouper,==,year"|first %}
-            {% if year_blogmarks %}
-                {% regroup year_blogmarks.list by created|date:"F" as blogmarks_by_month %}
-                {% with month_blogmarks=blogmarks_by_month|selectattr:"grouper,==,month"|first %}
-                {% if month_blogmarks %}
-                    {% for blogmark in month_blogmarks.list %}
-                    <li>
-                        <span class="archive-date">{{ blogmark.created|date:"d" }}</span>
-                        <a href="{{ blogmark.get_absolute_url }}" class="blogmark-link">{{ blogmark.title }}</a>
-                    </li>
+
+            {% for year_group in blogmarks_by_year %}
+                {% if year_group.grouper == year %}
+                    {% regroup year_group.list by created|date:"F" as blogmarks_by_month %}
+                    {% for month_group in blogmarks_by_month %}
+                        {% if month_group.grouper == month %}
+                            {% for blogmark in month_group.list %}
+                            <li>
+                                <span class="archive-date">{{ blogmark.created|date:"d" }}</span>
+                                <a href="{{ blogmark.get_absolute_url }}" class="blogmark-link">{{ blogmark.title }}</a>
+                            </li>
+                            {% endfor %}
+                        {% endif %}
                     {% endfor %}
                 {% endif %}
-                {% endwith %}
-            {% endif %}
-            {% endwith %}
-        </ul>
+            {% endfor %}        </ul>
         {% endfor %}
     {% endfor %}
 </section>

@@ -1,3 +1,6 @@
+from datetime import datetime
+from django.conf import settings
+from django.utils import timezone
 from django.conf import settings
 
 def common_context(request):

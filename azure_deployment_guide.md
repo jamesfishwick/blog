@@ -13,14 +13,14 @@ This guide provides instructions for deploying the Minimal Wave Blog to Azure Ap
 ### Create a Resource Group
 
 ```bash
-az group create --name minimalwave-blog-rg --location eastus
+az group create --name fishwick-blog-rg --location eastus
 ```
 
 ### Create a PostgreSQL Database
 
 ```bash
 az postgres flexible-server create \
-  --resource-group minimalwave-blog-rg \
+  --resource-group fishwick-blog-rg \
   --name minimalwave-db \
   --admin-user minimalwave \
   --admin-password <your-secure-password> \
@@ -32,7 +32,7 @@ Create a database:
 
 ```bash
 az postgres flexible-server db create \
-  --resource-group minimalwave-blog-rg \
+  --resource-group fishwick-blog-rg \
   --server-name minimalwave-db \
   --database-name minimalwave
 ```
@@ -41,7 +41,7 @@ az postgres flexible-server db create \
 
 ```bash
 az appservice plan create \
-  --resource-group minimalwave-blog-rg \
+  --resource-group fishwick-blog-rg \
   --name minimalwave-plan \
   --sku B1 \
   --is-linux
@@ -51,9 +51,9 @@ az appservice plan create \
 
 ```bash
 az webapp create \
-  --resource-group minimalwave-blog-rg \
+  --resource-group fishwick-blog-rg \
   --plan minimalwave-plan \
-  --name minimalwave-blog \
+  --name fishwick-blog \
   --runtime "PYTHON:3.10" \
   --deployment-local-git
 ```
@@ -64,12 +64,12 @@ Set the necessary environment variables for your Django application:
 
 ```bash
 az webapp config appsettings set \
-  --resource-group minimalwave-blog-rg \
-  --name minimalwave-blog \
+  --resource-group fishwick-blog-rg \
+  --name fishwick-blog \
   --settings \
     DJANGO_SETTINGS_MODULE=minimalwave_blog.settings.production \
     SECRET_KEY="<your-secret-key>" \
-    ALLOWED_HOST="minimalwave-blog.azurewebsites.net" \
+    ALLOWED_HOST="fishwick-blog.azurewebsites.net" \
     DATABASE_URL="postgres://minimalwave:<your-secure-password>@minimalwave-db.postgres.database.azure.com:5432/minimalwave"
 ```
 
@@ -79,7 +79,7 @@ Allow connections from Azure services:
 
 ```bash
 az postgres flexible-server firewall-rule create \
-  --resource-group minimalwave-blog-rg \
+  --resource-group fishwick-blog-rg \
   --name minimalwave-db \
   --rule-name AllowAzureServices \
   --start-ip-address 0.0.0.0 \
@@ -93,7 +93,7 @@ az postgres flexible-server firewall-rule create \
 ```
 SECRET_KEY=<your-secret-key>
 DATABASE_URL=postgres://minimalwave:<your-secure-password>@minimalwave-db.postgres.database.azure.com:5432/minimalwave
-ALLOWED_HOST=minimalwave-blog.azurewebsites.net
+ALLOWED_HOST=fishwick-blog.azurewebsites.net
 ```
 
 2. Create a `startup.sh` file in your project root:
@@ -155,31 +155,31 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v2
-    
+
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
         python-version: '3.10'
-    
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    
+
     - name: Collect static files
       run: python manage.py collectstatic --noinput
       env:
         DJANGO_SETTINGS_MODULE: minimalwave_blog.settings.production
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
         DATABASE_URL: ${{ secrets.DATABASE_URL }}
-    
+
     - name: Deploy to Azure
       uses: azure/webapps-deploy@v2
       with:
-        app-name: 'minimalwave-blog'
+        app-name: 'fishwick-blog'
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
 ```
 
@@ -195,13 +195,13 @@ jobs:
 
 ```bash
 az webapp config hostname add \
-  --resource-group minimalwave-blog-rg \
-  --webapp-name minimalwave-blog \
+  --resource-group fishwick-blog-rg \
+  --webapp-name fishwick-blog \
   --hostname www.yourdomainname.com
 ```
 
 3. Configure DNS settings with your domain registrar:
-   - Add a CNAME record pointing to `minimalwave-blog.azurewebsites.net`
+   - Add a CNAME record pointing to `fishwick-blog.azurewebsites.net`
 
 ## Step 7: Enable HTTPS (Optional)
 
@@ -209,8 +209,8 @@ az webapp config hostname add \
 
 ```bash
 az webapp config ssl create \
-  --resource-group minimalwave-blog-rg \
-  --name minimalwave-blog \
+  --resource-group fishwick-blog-rg \
+  --name fishwick-blog \
   --hostname www.yourdomainname.com
 ```
 
@@ -218,20 +218,20 @@ az webapp config ssl create \
 
 ```bash
 az webapp config ssl bind \
-  --resource-group minimalwave-blog-rg \
-  --name minimalwave-blog \
+  --resource-group fishwick-blog-rg \
+  --name fishwick-blog \
   --certificate-thumbprint <certificate-thumbprint> \
   --ssl-type SNI
 ```
 
 ## Troubleshooting
 
-- Check application logs: `az webapp log tail --resource-group minimalwave-blog-rg --name minimalwave-blog`
-- SSH into the web app: `az webapp ssh --resource-group minimalwave-blog-rg --name minimalwave-blog`
+- Check application logs: `az webapp log tail --resource-group fishwick-blog-rg --name fishwick-blog`
+- SSH into the web app: `az webapp ssh --resource-group fishwick-blog-rg --name fishwick-blog`
 - Check deployment logs in the Azure Portal under your web app's Deployment Center
 
 ## Maintenance
 
 - Update your application: Push new commits to the deployment branch
-- Scale your app service plan if needed: `az appservice plan update --resource-group minimalwave-blog-rg --name minimalwave-plan --sku S1`
-- Create database backups: `az postgres flexible-server backup create --resource-group minimalwave-blog-rg --server-name minimalwave-db`
+- Scale your app service plan if needed: `az appservice plan update --resource-group fishwick-blog-rg --name minimalwave-plan --sku S1`
+- Create database backups: `az postgres flexible-server backup create --resource-group fishwick-blog-rg --server-name minimalwave-db`
